@@ -1,6 +1,6 @@
 
-org: ltim
-app: serverless-todo-app
+org: pavan2106
+app: todo
 service: serverless-todo-app
 
 plugins:
@@ -16,7 +16,7 @@ provider:
   lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-2'}
+  region: ${opt:region, 'us-east-1'}
   
 #  X-Ray Tracing
   tracing: 
@@ -26,8 +26,9 @@ provider:
   # Use these variables in the functions and resouorces section below. For example, 
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
+    PROJECT_NAME: "Udacity"
     TODOS_TABLE: Todos-${self:provider.stage}
-    TODOS_CREATED_AT_INDEX: CreatedAtIndex
+    TODOS_ID_INDEX: CreatedAtIndex
     # AUTH_0_SECRET: y1JYZ-ymqL8jCT0NXaKziB8zv9zORLIKzLprcY9g7-3Q6vLJumq6HRb50r0Qh1l6
     ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
@@ -209,7 +210,7 @@ functions:
         Action:
           - s3:PutObject
           - s3:GetObject
-        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENTS_BUCKET}/*
+        Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
@@ -245,7 +246,7 @@ resources:
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
         LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
+          - IndexName: ${self:provider.environment.TODOS_ID_INDEX}
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
@@ -258,7 +259,7 @@ resources:
     AttachmentsBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:provider.environment.ATTACHMENTS_BUCKET}
+        BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
         CorsConfiguration:
             CorsRules:
               -
@@ -317,4 +318,4 @@ resources:
           - Principal: '*'
             Action: 's3:GetObject'
             Effect: Allow
-            Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}
+            Resource: arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*
