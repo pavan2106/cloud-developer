@@ -9,7 +9,7 @@ const logger = createLogger('todos');
 const uuidv4 = require('uuid/v4')
 const todoAccess = new TodoAccess()
 
-export async function getAllToDo(userId: string): Promise<TodoItem[]> {
+export async function getAllToDo(userId: string): Promise<{items:TodoItem[]}> {
   logger.info('getAllToDo', userId);
   return todoAccess.getAllToDo(userId)
 }
@@ -17,7 +17,7 @@ export async function getAllToDo(userId: string): Promise<TodoItem[]> {
 export function createToDo(
   createTodoRequest: CreateTodoRequest,
   userId: string
-): Promise<TodoItem> {
+): Promise<{item:TodoItem}> {
   const todoId = uuidv4()
   const s3BucketName = process.env.S3_BUCKET_NAME
   logger.info('createToDo', userId);
