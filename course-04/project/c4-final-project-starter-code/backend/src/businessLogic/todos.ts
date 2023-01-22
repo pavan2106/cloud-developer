@@ -8,12 +8,12 @@ import {TodoAccess} from "../dataLayer/TodoAccess";
 const uuidv4 = require('uuid/v4');
 const toDoAccess = new TodoAccess();
 
-export async function getAllToDo(jwtToken: string): Promise<TodoItem[]> {
+export async function getAllToDo(jwtToken: string): Promise<{items:TodoItem[]}> {
     const userId = parseUserId(jwtToken);
     return toDoAccess.getAllToDo(userId);
 }
 
-export function createToDo(createTodoRequest: CreateTodoRequest, jwtToken: string): Promise<TodoItem> {
+export function createToDo(createTodoRequest: CreateTodoRequest, jwtToken: string): Promise<{item:TodoItem}> {
     const userId = parseUserId(jwtToken);
     const todoId =  uuidv4();
     const s3BucketName = process.env.S3_BUCKET_NAME;
