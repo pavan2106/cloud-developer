@@ -29,8 +29,7 @@ provider:
     PROJECT_NAME: "Udacity"
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_ID_INDEX: CreatedAtIndex
-    # AUTH_0_SECRET: y1JYZ-ymqL8jCT0NXaKziB8zv9zORLIKzLprcY9g7-3Q6vLJumq6HRb50r0Qh1l6
-    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: 351932908997-serverless-c4-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
 custom:

@@ -5,11 +5,12 @@ import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { TodoAccess } from '../dataLayer/TodoAccess'
 import { createLogger } from '../utils/logger'
-
+const logger = createLogger('todos');
 const uuidv4 = require('uuid/v4')
 const todoAccess = new TodoAccess()
 
 export async function getAllToDo(userId: string): Promise<TodoItem[]> {
+  logger.info('getAllToDo', userId);
   return todoAccess.getAllToDo(userId)
 }
 
@@ -19,7 +20,7 @@ export function createToDo(
 ): Promise<TodoItem> {
   const todoId = uuidv4()
   const s3BucketName = process.env.S3_BUCKET_NAME
-
+  logger.info('createToDo', userId);
   return todoAccess.createToDo({
     userId: userId,
     todoId: todoId,
@@ -45,7 +46,9 @@ export function deleteToDo(todoId: string, userId: string): Promise<string> {
 export function generateUploadUrl(todoId: string): Promise<string> {
   return todoAccess.generateUploadUrl(todoId)
 }
-
+// export function generateUploadUrl(todoId: string): Promise<string> {
+//     return toDoAccess.generateUploadUrl(todoId);
+// }
 // import { TodosAccess } from './todosAcess'
 // import { AttachmentUtils } from './attachmentUtils'
 // import { TodoItem } from '../models/TodoItem'
@@ -79,10 +82,10 @@ export function generateUploadUrl(todoId: string): Promise<string> {
 //     return true;
 //   }
 
-  export async function createAttachmentPresignedUrl( id: string) : Promise<boolean> {
-    createLogger(id)
-    return true;
-  }
+  // export async function createAttachmentPresignedUrl( id: string) : Promise<boolean> {
+  //   createLogger(id)
+  //   return true;
+  // }
 
 //   export async function getTodosForUser(
 //     id: string
