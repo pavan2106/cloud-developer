@@ -1,6 +1,5 @@
 import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
 import 'source-map-support/register'
-
 import { verify, decode } from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger'
 import Axios from 'axios'
@@ -85,23 +84,12 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
    //todo find kid
    const signingKey = signingKeys.find(key => key.kid === header.kid);
     // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-    // const pemData = res['data']['keys'][0]['x5c'][0]
-    // const cert = `-----BEGIN CERTIFICATE-----\n${pemData}\n-----END CERTIFICATE-----`
 
     return verify(token,  signingKey.publicKey || signingKey.rsaPublicKey, { algorithms: ['RS256'] }) as JwtPayload
   } catch(err){
     logger.error('Fail to authenticate', err)
   }
   
-  //const token = getToken(authHeader)
-  //const jwt: Jwt = decode(token, { complete: true }) as Jwt
-
-  // TODO: Implement token verification
-  // You should implement it similarly to how it was implemented for the exercise for the lesson 5
-  // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-  //verify(token, auth0Secret);
-
-  //return jwt.payload
 }
 
 function getToken(authHeader: string): string {

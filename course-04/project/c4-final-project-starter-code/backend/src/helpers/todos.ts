@@ -2,46 +2,58 @@ import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { TodoUpdate } from '../models/TodoUpdate'
-import { TodoAccess } from '../dataLayer/TodoAccess'
 import { createLogger } from '../utils/logger'
-const logger = createLogger('todos');
+import {
+  createTodoItem,
+  deleteTodoItem,
+  generateTodItemUploadUrl,
+  getAllTodoItems,
+  updateTodoItem
+} from './todosAcess'
+const logger = createLogger('todos')
 const uuidv4 = require('uuid/v4')
-const todoAccess = new TodoAccess()
 
-export async function getAllToDo(userId: string): Promise<{items:TodoItem[]}> {
-  logger.info('getAllToDo', userId);
-  return todoAccess.getAllToDo(userId)
-}
-
-export function createToDo(
+const createTodo = async (
   createTodoRequest: CreateTodoRequest,
   userId: string
-): Promise<{item:TodoItem}> {
+): Promise<{ item: TodoItem }> => {
   const todoId = uuidv4()
-  const s3BucketName = process.env.S3_BUCKET_NAME
-  logger.info('createToDo', userId);
-  return todoAccess.createToDo({
+  logger.info('createTodo', userId)
+  return createTodoItem({
     userId: userId,
     todoId: todoId,
-    attachmentUrl: `https://${s3BucketName}.s3.amazonaws.com/${todoId}`,
-    createdAt: new Date().getTime().toString(),
+    attachmentUrl: '',
+    createdAt: new Date().toString(),
     done: false,
-    ...createTodoRequest
+    name: createTodoRequest.name,
+    dueDate: createTodoRequest.dueDate
   })
 }
 
-export function updateToDo(
+const updateTodo = async (
   updateTodoRequest: UpdateTodoRequest,
   todoId: string,
   userId: string
-): Promise<TodoUpdate> {
-  return todoAccess.updateToDo(updateTodoRequest, todoId, userId)
+): Promise<TodoUpdate> => {
+  logger.info('Updating Todo items', todoId);
+  return updateTodoItem(updateTodoRequest, todoId, userId)
 }
 
-export function deleteToDo(todoId: string, userId: string): Promise<string> {
-  return todoAccess.deleteToDo(todoId, userId)
+const deleteTodo = async (todoId: string, userId: string): Promise<string> => {
+  logger.info('Deleting Todo items', todoId);
+  return deleteTodoItem(todoId, userId)
 }
 
-export function generateUploadUrl(todoId: string, userId: string): Promise<string> {
-  return todoAccess.generateUploadUrl(todoId, userId)
+const getAllTodo = async (userId: string): Promise<{ items: TodoItem[] }> => {
+  logger.info('get All Todo items', userId);
+  return getAllTodoItems(userId)
 }
+
+const generateUploadUrl = async (
+  todoId: string,
+  userId: string
+): Promise<string> => {
+  return generateTodItemUploadUrl(todoId, userId)
+}
+
+export { createTodo, updateTodo, deleteTodo, getAllTodo, generateUploadUrl }
