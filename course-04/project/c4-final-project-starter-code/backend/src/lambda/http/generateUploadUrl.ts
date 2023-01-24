@@ -1,12 +1,12 @@
 import 'source-map-support/register'
-
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import * as middy from 'middy'
-import { cors, httpErrorHandler } from 'middy/middlewares'
-import { createLogger } from '../../utils/logger'
-import { generateUploadUrl } from '../../helpers/todos'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import * as middy from 'middy';
+import { cors, httpErrorHandler } from 'middy/middlewares';
+import { createLogger } from '../../utils/logger';
+import { generateUploadUrl } from '../../helpers/todos';
 import { getUserId } from '../utils';
-const logger = createLogger('generateUploadUrl')
+const logger = createLogger('generateUploadUrl');
+
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
