@@ -8,7 +8,6 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
-  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -27,65 +26,19 @@ provider:
   # ${self:provider.environment.S3_BUCKET_NAME}
   environment:
     PROJECT_NAME: "Udacity"
-    TODOS_TABLE: Todos-${self:provider.stage}
+    TODOS_TABLE: Todos-${self:provider.stage}-849578563396
     TODOS_ID_INDEX: CreatedAtIndex
-    S3_BUCKET_NAME: 351932908997-serverless-c4-todo-images-${self:provider.stage}
+    S3_BUCKET_NAME: 849578563396-serverless-c4-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
-
-custom:
-  documentation:
-    api:
-      info:
-        version: '1.0.0'
-        title: serverless-api
-        description: serverless-api
-    models:
-      - name: CreateTodoRequest
-        contentType: "application/json"
-        schema:
-          required:
-            - name
-            - dueDate
-          properties:
-            name:
-              minLength: 1
-              type: string
-            dueDate:
-              type: string
-      - name: UpdateTodoRequest
-        contentType: "application/json"
-        schema:
-          required:
-            - name
-            - dueDate
-            - done
-          properties:
-            name:
-              minLength: 1
-              type: string
-            dueDate:
-              type: string
-            done:
-              type: boolean
-  logs:
-    # Enable API Gateway logs
-    restApi: true
-
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: "*"
+    VIDEO_TABLE: videos-${self:provider.stage}-849578563396
+    VIDEO_ID_INDEX: CreatedAtIndex
+    VIDEO_S3_BUCKET_NAME: 849578563396-serverless-c4-videos-${self:provider.stage}
 
 
 functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
-
 
   GetTodos:
     handler: src/lambda/http/getTodos.handler
@@ -109,7 +62,6 @@ functions:
         Resource:
           - "*"
 
- 
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
@@ -118,11 +70,6 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-          documentation:
-            summary: "Create a new todo item"
-            description: "Create a new todo item"
-            requestModels:
-              "application/json": CreateTodoRequest
           reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-todo-role-${self:provider.stage}
     iamRoleStatements: 
@@ -137,7 +84,6 @@ functions:
         Resource:
           - "*"
 
-
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
     events:
@@ -146,11 +92,6 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
-          documentation:
-            summary: "Update a todo item"
-            description: "Update a todo item"
-            requestModels:
-              "application/json": UpdateTodoRequest
           reqValidatorName: RequestBodyValidator
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-todo-role-${self:provider.stage}
     iamRoleStatements:
@@ -193,7 +134,6 @@ functions:
           - "xray:PutTelemetryRecords"
         Resource:
           - "*"
-
   # POST: Configure this function
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
@@ -218,6 +158,130 @@ functions:
         Action:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_ID_INDEX}
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+  GetVideos:
+    handler: src/lambda/http/getVideos.handler
+    events:
+      - http:
+          method: get
+          path: videos
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-video-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action: 
+          - dynamodb:GetItem
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+ 
+  CreateVideo:
+    handler: src/lambda/http/createVideo.handler
+    events:
+      - http:
+          method: post
+          path: videos
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-video-role-${self:provider.stage}
+    iamRoleStatements: 
+      - Effect: Allow
+        Action: 
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+
+  UpdateVideo:
+    handler: src/lambda/http/updateVideo.handler
+    events:
+      - http:
+          method: patch
+          path: videos/{videoId}
+          cors: true
+          authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-update-video-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}/index/${self:provider.environment.VIDEO_ID_INDEX}
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+  # DELETE: Configure this function
+  DeleteVideo:
+    handler: src/lambda/http/deleteVideo.handler
+    events:
+      - http:
+          method: delete
+          path: videos/{videoId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-delete-video-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}/index/${self:provider.environment.VIDEO_ID_INDEX}
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}
+      - Effect: Allow
+        Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+        Resource:
+          - "*"
+  # POST: Configure this function
+  GenerateUploadVideoUrl:
+    handler: src/lambda/http/generateUploadVideoUrl.handler
+    events:
+      - http:
+          method: post
+          path: videos/{videoId}/attachment
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-s3-video-upload-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.VIDEO_S3_BUCKET_NAME}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VIDEO_TABLE}/index/${self:provider.environment.VIDEO_ID_INDEX}
       - Effect: Allow
         Action:
           - "xray:PutTraceSegments"
@@ -253,7 +317,6 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL # What attributes will be copied to an index
-    # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
     AttachmentsBucket:
       Type: AWS::S3::Bucket
@@ -273,6 +336,54 @@ resources:
                   - DELETE
                   - HEAD
                 MaxAge: 3000
+
+    VideoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: videoId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: videoId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.VIDEO_TABLE}
+        LocalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.VIDEO_ID_INDEX}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL # What attributes will be copied to an index
+    # Do not forget to add the CorsConfiguration propoerty
+    VideoAttachmentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.VIDEO_S3_BUCKET_NAME}
+        CorsConfiguration:
+            CorsRules:
+              -
+                AllowedOrigins:
+                  - '*'
+                AllowedHeaders:
+                  - '*'
+                AllowedMethods:
+                  - GET
+                  - PUT
+                  - POST
+                  - DELETE
+                  - HEAD
+                MaxAge: 3000
+
+ 
 
     RequestBodyValidator:
       Type: AWS::ApiGateway::RequestValidator
@@ -305,7 +416,6 @@ resources:
         RestApiId:
           Ref: ApiGatewayRestApi 
 	  
-    # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
@@ -318,3 +428,15 @@ resources:
             Action: 's3:GetObject'
             Effect: Allow
             Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET_NAME}/*
+
+    VideoBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref VideoAttachmentsBucket
+        PolicyDocument: 
+          Version: '2012-10-17'
+          Statement:
+          - Principal: '*'
+            Action: 's3:GetObject'
+            Effect: Allow
+            Resource: arn:aws:s3:::${self:provider.environment.VIDEO_S3_BUCKET_NAME}/*
