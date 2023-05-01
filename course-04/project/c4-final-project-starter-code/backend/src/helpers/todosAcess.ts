@@ -110,10 +110,10 @@ const generateTodItemUploadUrl = async (
       Bucket: s3BucketName,
       Key: todoId,
       Expires: 100
-    })
-    logger.log('url', url)
-    await updateTodoImage(todoId, userId, url)
-    return url as string
+    });
+    logger.log('url', url);
+    await updateTodoImage(todoId, userId, url);
+    return url;
   } catch (err) {
     logger.error(JSON.stringify(err))
   }
