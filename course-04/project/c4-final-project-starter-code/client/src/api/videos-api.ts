@@ -7,7 +7,7 @@ import { UpdateVideoRequest } from '../types/UpdateVideoRequest';
 export async function getVideos(idToken: string): Promise<Video[]> {
   console.log('Fetching Videos')
 
-  const response = await Axios.get(`${apiEndpoint}/Videos`, {
+  const response = await Axios.get(`${apiEndpoint}/videos`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`

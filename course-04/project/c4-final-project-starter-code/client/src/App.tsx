@@ -7,6 +7,8 @@ import { EditTodo } from './components/EditTodo'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
 import { Todos } from './components/Todos'
+import { Videos } from './components/videos'
+import { EditVideo } from './components/EditVideo'
 
 export interface AppProps {}
 
@@ -59,6 +61,9 @@ export default class App extends Component<AppProps, AppState> {
         <Menu.Item name="home">
           <Link to="/">Home</Link>
         </Menu.Item>
+        <Menu.Item name="video">
+          <Link to="/videos">Video</Link>
+        </Menu.Item>
 
         <Menu.Menu position="right">{this.logInLogOutButton()}</Menu.Menu>
       </Menu>
@@ -95,6 +100,13 @@ export default class App extends Component<AppProps, AppState> {
             return <Todos {...props} auth={this.props.auth} />
           }}
         />
+         <Route
+          path="/videos"
+          exact
+          render={props => {
+            return <Videos {...props} auth={this.props.auth} />
+          }}
+        />
 
         <Route
           path="/todos/:todoId/edit"
@@ -103,7 +115,13 @@ export default class App extends Component<AppProps, AppState> {
             return <EditTodo {...props} auth={this.props.auth} />
           }}
         />
-
+        <Route
+          path="/videos/:videoId/edit"
+          exact
+          render={props => {
+            return <EditVideo {...props} auth={this.props.auth} />
+          }}
+        />
         <Route component={NotFound} />
       </Switch>
     )

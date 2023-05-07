@@ -1,6 +1,7 @@
 import dateFormat from 'dateformat'
 import { History } from 'history'
 import update from 'immutability-helper'
+import ReactPlayer from 'react-player'
 import * as React from 'react'
 import {
   Button,
@@ -46,10 +47,9 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
 
   onVideoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
-      const dueDate = this.calculateDueDate()
+    //  const dueDate = this.calculateDueDate()
       const newVideo = await createVideo(this.props.auth.getIdToken(), {
-        name: this.state.newVideoName,
-        dueDate
+        title: this.state.newVideoName,
       })
       this.setState({
         videos: [...this.state.videos, newVideo],
@@ -75,15 +75,13 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
     try {
       const video = this.state.videos[pos]
       await patchVideo(this.props.auth.getIdToken(), video.videoId, {
-        name: video.name,
-        dueDate: video.dueDate,
-        done: !video.done
+        title: video.title,
       })
-      this.setState({
-        videos: update(this.state.videos, {
-          [pos]: { done: { $set: !video.done } }
-        })
-      })
+      // this.setState({
+      //   videos: update(this.state.videos, {
+      //     [pos]: { done: { $set: !video.done } }
+      //   })
+      // })
     } catch {
       alert('Video deletion failed')
     }
@@ -104,7 +102,7 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
   render() {
     return (
       <div>
-        <Header as="h1">TODOs</Header>
+        <Header as="h1">Videos</Header>
 
         {this.renderCreateVideoInput()}
 
@@ -122,12 +120,12 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
               color: 'teal',
               labelPosition: 'left',
               icon: 'add',
-              content: 'New task',
+              content: 'New Video Title',
               onClick: this.onVideoCreate
             }}
             fluid
             actionPosition="left"
-            placeholder="To change the world..."
+            placeholder="To add new Video..."
             onChange={this.handleNameChange}
           />
         </Grid.Column>
@@ -150,7 +148,7 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
     return (
       <Grid.Row>
         <Loader indeterminate active inline="centered">
-          Loading TODOs
+          Loading Videos
         </Loader>
       </Grid.Row>
     )
@@ -163,17 +161,17 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
           return (
             <Grid.Row key={video.videoId}>
               <Grid.Column width={1} verticalAlign="middle">
-                <Checkbox
+                {/* <Checkbox
                   onChange={() => this.onVideoCheck(pos)}
                   checked={video.done}
-                />
+                /> */}
               </Grid.Column>
               <Grid.Column width={10} verticalAlign="middle">
-                {video.name}
+                {video.title}
               </Grid.Column>
-              <Grid.Column width={3} floated="right">
+              {/* <Grid.Column width={3} floated="right">
                 {video.dueDate}
-              </Grid.Column>
+              </Grid.Column> */}
               <Grid.Column width={1} floated="right">
                 <Button
                   icon
@@ -192,8 +190,8 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
                   <Icon name="delete" />
                 </Button>
               </Grid.Column>
-              {video.attachmentUrl && (
-                <Image src={video.attachmentUrl} size="small" wrapped />
+              {video.url && (
+                <ReactPlayer url={video.url} controls={true} />
               )}
               <Grid.Column width={16}>
                 <Divider />

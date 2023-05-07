@@ -1,4 +1,3 @@
 export interface CreateVideoRequest {
-  name: string
-  dueDate: string
+  title: string
 }
