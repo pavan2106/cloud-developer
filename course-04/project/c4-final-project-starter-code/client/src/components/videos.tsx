@@ -15,7 +15,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createVideo, deleteVideo, getVideos, patchVideo } from '../api/videos-api'
+import { createVideo, deleteVideo, getVideos } from '../api/videos-api'
 import Auth from '../auth/Auth'
 import { Video } from '../types/Video'
 
@@ -47,7 +47,6 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
 
   onVideoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
-    //  const dueDate = this.calculateDueDate()
       const newVideo = await createVideo(this.props.auth.getIdToken(), {
         title: this.state.newVideoName,
       })
@@ -71,21 +70,7 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
     }
   }
 
-  onVideoCheck = async (pos: number) => {
-    try {
-      const video = this.state.videos[pos]
-      await patchVideo(this.props.auth.getIdToken(), video.videoId, {
-        title: video.title,
-      })
-      // this.setState({
-      //   videos: update(this.state.videos, {
-      //     [pos]: { done: { $set: !video.done } }
-      //   })
-      // })
-    } catch {
-      alert('Video deletion failed')
-    }
-  }
+
 
   async componentDidMount() {
     try {
@@ -160,18 +145,9 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
         {this.state.videos.map((video, pos) => {
           return (
             <Grid.Row key={video.videoId}>
-              <Grid.Column width={1} verticalAlign="middle">
-                {/* <Checkbox
-                  onChange={() => this.onVideoCheck(pos)}
-                  checked={video.done}
-                /> */}
-              </Grid.Column>
               <Grid.Column width={10} verticalAlign="middle">
                 {video.title}
               </Grid.Column>
-              {/* <Grid.Column width={3} floated="right">
-                {video.dueDate}
-              </Grid.Column> */}
               <Grid.Column width={1} floated="right">
                 <Button
                   icon

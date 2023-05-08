@@ -30,19 +30,6 @@ export async function createVideo(
   return response.data.item
 }
 
-export async function patchVideo(
-  idToken: string,
-  videoId: string,
-  updatedVideo: UpdateVideoRequest
-): Promise<void> {
-  await Axios.patch(`${apiEndpoint}/videos/${videoId}`, JSON.stringify(updatedVideo), {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${idToken}`
-    }
-  })
-}
-
 export async function deleteVideo(
   idToken: string,
   videoId: string
