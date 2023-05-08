@@ -1,8 +1,8 @@
 export interface Video {
+  userId: string
   videoId: string
   createdAt: string
-  name: string
-  dueDate: string
-  done: boolean
-  attachmentUrl?: string
+  title: string
+  updatedAt: string
+  url?: string
 }

@@ -101,7 +101,7 @@ const generateVideoItemUploadUrl = async (
   logger.log('Generating URL for', videoId)
   try {
     const s3Client = new AWS.S3({ signatureVersion: 'v4' })
-    const s3BucketName = process.env.S3_VIDEO_BUCKET_NAME
+    const s3BucketName = process.env.VIDEO_S3_BUCKET_NAME
 
     const url = s3Client.getSignedUrl('putObject', {
       Bucket: s3BucketName,

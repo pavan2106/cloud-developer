@@ -1,7 +1,5 @@
-
-org: pavan2106
 app: todo
-service: serverless-todo-app
+service: serverless-todo-app-849578563396
 
 plugins:
   - serverless-webpack
@@ -9,14 +7,20 @@ plugins:
   - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
 
+
 provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
-
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
-  
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:GetObject"
+      Resource:
+        - "*"  
 #  X-Ray Tracing
   tracing: 
     lambda: true
@@ -322,6 +326,14 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.S3_BUCKET_NAME}
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: ObjectWriter
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
         CorsConfiguration:
             CorsRules:
               -
@@ -368,6 +380,14 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.VIDEO_S3_BUCKET_NAME}
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: ObjectWriter
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
         CorsConfiguration:
             CorsRules:
               -
