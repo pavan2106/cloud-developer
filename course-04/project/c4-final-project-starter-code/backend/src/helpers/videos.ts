@@ -8,7 +8,7 @@ import {
   generateVideoItemUploadUrl,
   getAllVideoItems,
   updateVideoItem
-} from './videosAccess'
+} from '../dataAccess/videosAccess'
 const logger = createLogger('Videos')
 const uuidv4 = require('uuid/v4')
 
