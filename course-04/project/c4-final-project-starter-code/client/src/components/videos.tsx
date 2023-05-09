@@ -47,6 +47,11 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
 
   onVideoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
+      if(!this.state.newVideoName || !this.state.newVideoName.length){
+        alert('Video title cannot empty')
+        return;
+      }
+
       const newVideo = await createVideo(this.props.auth.getIdToken(), {
         title: this.state.newVideoName,
       })
@@ -112,6 +117,7 @@ export class Videos extends React.PureComponent<VideosProps, VideosState> {
             actionPosition="left"
             placeholder="To add new Video..."
             onChange={this.handleNameChange}
+             
           />
         </Grid.Column>
         <Grid.Column width={16}>
