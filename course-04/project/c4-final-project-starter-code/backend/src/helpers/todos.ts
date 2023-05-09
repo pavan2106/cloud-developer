@@ -9,7 +9,7 @@ import {
   generateTodItemUploadUrl,
   getAllTodoItems,
   updateTodoItem
-} from './todosAcess'
+} from '../dataAccess/todosAcess'
 const logger = createLogger('todos')
 const uuidv4 = require('uuid/v4')
 
